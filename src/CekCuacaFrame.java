@@ -25,18 +25,186 @@ public class CekCuacaFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        pnlJudul = new javax.swing.JPanel();
+        lblJudul = new javax.swing.JLabel();
+        pnlKonten = new javax.swing.JPanel();
+        lblKota = new javax.swing.JLabel();
+        cbKota = new javax.swing.JComboBox<>();
+        btnCek = new javax.swing.JButton();
+        lblCuaca = new javax.swing.JLabel();
+        lblTampilCuaca = new javax.swing.JLabel();
+        lblSuhu = new javax.swing.JLabel();
+        lblTampilSuhu = new javax.swing.JLabel();
+        lblLembap = new javax.swing.JLabel();
+        lblTampilLembap = new javax.swing.JLabel();
+        lblGambar = new javax.swing.JLabel();
+        lblTampilGambar = new javax.swing.JLabel();
+        btnFavorit = new javax.swing.JButton();
+        btnMuat = new javax.swing.JButton();
+        btnSimpan = new javax.swing.JButton();
+        scrlTable = new javax.swing.JScrollPane();
+        tblCuaca = new javax.swing.JTable();
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Aplikasi Cek Cuaca Sederhana");
+
+        pnlJudul.setBackground(new java.awt.Color(255, 255, 204));
+        pnlJudul.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlJudul.setPreferredSize(new java.awt.Dimension(466, 50));
+
+        lblJudul.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblJudul.setIcon(new javax.swing.ImageIcon(getClass().getResource("/weathericon.png"))); // NOI18N
+        lblJudul.setText("APLIKASI CEK CUACA SEDERHANA");
+        pnlJudul.add(lblJudul);
+
+        getContentPane().add(pnlJudul, java.awt.BorderLayout.PAGE_START);
+
+        pnlKonten.setBackground(new java.awt.Color(255, 255, 204));
+
+        lblKota.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblKota.setText("PILIH KOTA:");
+
+        cbKota.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+
+        btnCek.setBackground(new java.awt.Color(51, 255, 51));
+        btnCek.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnCek.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cek.png"))); // NOI18N
+        btnCek.setText("CEK");
+
+        lblCuaca.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCuaca.setText("CUACA SAAT INI:");
+
+        lblTampilCuaca.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblTampilCuaca.setText("Label Tampil Cuaca");
+
+        lblSuhu.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblSuhu.setText("SUHU:");
+
+        lblTampilSuhu.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblTampilSuhu.setText("Label Tampil Suhu");
+
+        lblLembap.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblLembap.setText("KELEMBAPAN:");
+
+        lblTampilLembap.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblTampilLembap.setText("Label Tampil Kelembapan");
+
+        lblGambar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblGambar.setText("GAMBAR:");
+
+        lblTampilGambar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblTampilGambar.setText("Label Tampil Gambar");
+
+        btnFavorit.setBackground(new java.awt.Color(255, 102, 102));
+        btnFavorit.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnFavorit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/favorit.png"))); // NOI18N
+        btnFavorit.setText("SIMPAN FAVORIT");
+
+        btnMuat.setBackground(new java.awt.Color(255, 153, 0));
+        btnMuat.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnMuat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/load.png"))); // NOI18N
+        btnMuat.setText("MUAT DATA");
+
+        btnSimpan.setBackground(new java.awt.Color(0, 204, 255));
+        btnSimpan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnSimpan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/save.png"))); // NOI18N
+        btnSimpan.setText("SIMPAN CSV");
+
+        scrlTable.setBackground(new java.awt.Color(255, 255, 204));
+
+        tblCuaca.setBackground(new java.awt.Color(255, 255, 204));
+        tblCuaca.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        tblCuaca.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        tblCuaca.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "KOTA", "SUHU", "CUACA", "WAKTU"
+            }
+        ));
+        scrlTable.setViewportView(tblCuaca);
+
+        javax.swing.GroupLayout pnlKontenLayout = new javax.swing.GroupLayout(pnlKonten);
+        pnlKonten.setLayout(pnlKontenLayout);
+        pnlKontenLayout.setHorizontalGroup(
+            pnlKontenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlKontenLayout.createSequentialGroup()
+                .addGroup(pnlKontenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlKontenLayout.createSequentialGroup()
+                        .addGroup(pnlKontenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlKontenLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(btnFavorit)
+                                .addGroup(pnlKontenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(pnlKontenLayout.createSequentialGroup()
+                                        .addGap(47, 47, 47)
+                                        .addGroup(pnlKontenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(lblTampilSuhu)
+                                            .addComponent(lblTampilCuaca)
+                                            .addComponent(lblTampilLembap)
+                                            .addComponent(lblTampilGambar)
+                                            .addGroup(pnlKontenLayout.createSequentialGroup()
+                                                .addComponent(cbKota, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btnCek, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addGroup(pnlKontenLayout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(btnMuat, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(12, 12, 12)
+                                        .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(pnlKontenLayout.createSequentialGroup()
+                                .addGap(34, 34, 34)
+                                .addGroup(pnlKontenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblCuaca)
+                                    .addComponent(lblKota)
+                                    .addComponent(lblSuhu)
+                                    .addComponent(lblLembap)
+                                    .addComponent(lblGambar))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(pnlKontenLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(scrlTable)))
+                .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+        pnlKontenLayout.setVerticalGroup(
+            pnlKontenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlKontenLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(pnlKontenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblKota)
+                    .addComponent(cbKota, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCek))
+                .addGap(30, 30, 30)
+                .addGroup(pnlKontenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCuaca)
+                    .addComponent(lblTampilCuaca))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlKontenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblSuhu)
+                    .addComponent(lblTampilSuhu))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlKontenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblLembap)
+                    .addComponent(lblTampilLembap))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlKontenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblGambar)
+                    .addComponent(lblTampilGambar))
+                .addGap(18, 18, 18)
+                .addGroup(pnlKontenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnFavorit, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnMuat, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(scrlTable, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+                .addContainerGap())
         );
+
+        getContentPane().add(pnlKonten, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -77,5 +245,24 @@ public class CekCuacaFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCek;
+    private javax.swing.JButton btnFavorit;
+    private javax.swing.JButton btnMuat;
+    private javax.swing.JButton btnSimpan;
+    private javax.swing.JComboBox<String> cbKota;
+    private javax.swing.JLabel lblCuaca;
+    private javax.swing.JLabel lblGambar;
+    private javax.swing.JLabel lblJudul;
+    private javax.swing.JLabel lblKota;
+    private javax.swing.JLabel lblLembap;
+    private javax.swing.JLabel lblSuhu;
+    private javax.swing.JLabel lblTampilCuaca;
+    private javax.swing.JLabel lblTampilGambar;
+    private javax.swing.JLabel lblTampilLembap;
+    private javax.swing.JLabel lblTampilSuhu;
+    private javax.swing.JPanel pnlJudul;
+    private javax.swing.JPanel pnlKonten;
+    private javax.swing.JScrollPane scrlTable;
+    private javax.swing.JTable tblCuaca;
     // End of variables declaration//GEN-END:variables
 }
