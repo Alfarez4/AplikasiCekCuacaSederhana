@@ -14,6 +14,7 @@ public class CekCuacaFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         setTitle("Aplikasi Cek Cuaca Sederhana");
         muatFavorit();
+        cbKota.setSelectedIndex(-1);
 
         // Buat model tabel (tidak bisa diedit)
         model = new DefaultTableModel(new String[]{"KOTA", "SUHU", "CUACA", "WAKTU"}, 0) {
@@ -24,9 +25,6 @@ public class CekCuacaFrame extends javax.swing.JFrame {
         };
         tblCuaca.setModel(model);
 
-        // Combo box awal kosong (kota favorit)
-        cbKota.removeAllItems();
-
         // Tambahkan event tombol
         btnCek.addActionListener(e -> cekCuaca());
         btnFavorit.addActionListener(e -> tambahKotaFavorit());
@@ -34,6 +32,7 @@ public class CekCuacaFrame extends javax.swing.JFrame {
         btnMuat.addActionListener(e -> muatCSV());
         btnReset.addActionListener(e -> resetForm());
         btnKeluar.addActionListener(e -> System.exit(0));
+        cbKota.addActionListener(e -> txtKota.setText(""));
     }
 
     private void cekCuaca() {
@@ -120,40 +119,41 @@ public class CekCuacaFrame extends javax.swing.JFrame {
     private void simpanCSV() {
     JFileChooser chooser = new JFileChooser();
     chooser.setDialogTitle("Simpan data tabel ke file CSV");
-    chooser.setSelectedFile(new File("data_cuaca.csv")); // default filename
+    chooser.setSelectedFile(new File("data_cuaca.csv"));
 
     int userSelection = chooser.showSaveDialog(this);
     if (userSelection != JFileChooser.APPROVE_OPTION) {
-        return; // user batal
+        return;
     }
 
     File fileToSave = chooser.getSelectedFile();
-    // Tambahkan ekstensi .csv jika user lupa
     if (!fileToSave.getName().toLowerCase().endsWith(".csv")) {
         fileToSave = new File(fileToSave.getParentFile(), fileToSave.getName() + ".csv");
     }
 
     try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileToSave), "UTF-8"))) {
-        // (Opsional) tulis header
+        // Header data cuaca
         bw.write("KOTA,SUHU,CUACA,WAKTU");
         bw.newLine();
 
         for (int i = 0; i < model.getRowCount(); i++) {
-            // Ambil 4 kolom pertama (asumsi format yang kita pakai)
             String k = String.valueOf(model.getValueAt(i, 0));
             String s = String.valueOf(model.getValueAt(i, 1));
             String c = String.valueOf(model.getValueAt(i, 2));
             String w = String.valueOf(model.getValueAt(i, 3));
-
-            // Jika nilai mengandung koma, kita bungkus dengan quotes sederhana
-            k = k.contains(",") ? "\"" + k.replace("\"", "\"\"") + "\"" : k;
-            s = s.contains(",") ? "\"" + s.replace("\"", "\"\"") + "\"" : s;
-            c = c.contains(",") ? "\"" + c.replace("\"", "\"\"") + "\"" : c;
-            w = w.contains(",") ? "\"" + w.replace("\"", "\"\"") + "\"" : w;
-
             bw.write(k + "," + s + "," + c + "," + w);
             bw.newLine();
         }
+
+        // 🔽 Tambahan: Simpan daftar kota favorit di bawah tabel
+        bw.newLine();
+        bw.write("#KOTA_FAVORIT");
+        bw.newLine();
+        for (int i = 0; i < cbKota.getItemCount(); i++) {
+            bw.write(cbKota.getItemAt(i));
+            bw.newLine();
+        }
+
         bw.flush();
         JOptionPane.showMessageDialog(this, "Berhasil menyimpan ke: " + fileToSave.getAbsolutePath());
     } catch (IOException e) {
@@ -178,83 +178,71 @@ public class CekCuacaFrame extends javax.swing.JFrame {
     try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileToOpen), "UTF-8"))) {
         String line;
         model.setRowCount(0); // kosongkan tabel sebelum impor
+        cbKota.removeAllItems(); // kosongkan daftar favorit juga
 
         boolean firstLine = true;
+        boolean favoritSection = false; // untuk mendeteksi bagian "#KOTA_FAVORIT"
+
         while ((line = br.readLine()) != null) {
-            if (line.trim().isEmpty()) continue;
+            line = line.trim();
+            if (line.isEmpty()) continue;
 
-            // Jika ada header (mis. baris pertama mengandung "KOTA" atau "SUHU"), kita lewati
-            if (firstLine) {
-                String lower = line.toLowerCase();
-                if (lower.contains("kota") && lower.contains("suhu")) {
-                    firstLine = false;
-                    continue; // lewati header
-                }
+            // 🔹 Jika menemukan tanda #KOTA_FAVORIT, mulai bagian favorit
+            if (line.startsWith("#KOTA_FAVORIT")) {
+                favoritSection = true;
+                continue;
             }
-            firstLine = false;
 
-            // Parsing CSV sederhana: mempertimbangkan kemungkinan nilai dibungkus "..." yang mengandung koma.
-            // Implementasi lightweight: jika ada quotes di line, gunakan regex split sederhana.
-            List<String> tokens = new ArrayList<>();
-            if (line.contains("\"")) {
-                // parse yang mendukung quoted values
-                StringBuilder cur = new StringBuilder();
-                boolean inQuotes = false;
-                for (int i = 0; i < line.length(); i++) {
-                    char ch = line.charAt(i);
-                    if (ch == '\"') {
-                        // cek escaped quote
-                        if (i + 1 < line.length() && line.charAt(i + 1) == '\"') {
-                            cur.append('\"');
-                            i++; // lewati escaped quote
-                        } else {
-                            inQuotes = !inQuotes;
-                        }
-                    } else if (ch == ',' && !inQuotes) {
-                        tokens.add(cur.toString());
-                        cur.setLength(0);
-                    } else {
-                        cur.append(ch);
+            if (!favoritSection) {
+                // Bagian data tabel biasa
+                if (firstLine) {
+                    String lower = line.toLowerCase();
+                    if (lower.contains("kota") && lower.contains("suhu")) {
+                        firstLine = false;
+                        continue; // lewati header
                     }
                 }
-                tokens.add(cur.toString());
-            } else {
-                // Simple split jika tidak ada quotes
-                String[] parts = line.split(",");
-                for (String p : parts) tokens.add(p);
-            }
+                firstLine = false;
 
-            // Pastikan minimal 4 kolom (jika lebih, ambil 4 pertama)
-            if (tokens.size() >= 4) {
-                String k = tokens.get(0).trim();
-                String s = tokens.get(1).trim();
-                String c = tokens.get(2).trim();
-                String w = tokens.get(3).trim();
-                model.addRow(new Object[]{k, s, c, w});
+                // Parsing CSV sederhana (tanpa kutipan ganda)
+                String[] parts = line.split(",");
+                if (parts.length >= 4) {
+                    String kota = parts[0].trim();
+                    String suhu = parts[1].trim();
+                    String cuaca = parts[2].trim();
+                    String waktu = parts[3].trim();
+                    model.addRow(new Object[]{kota, suhu, cuaca, waktu});
+                }
             } else {
-                // jika format tidak sesuai, skip atau tambahkan dengan nilai kosong
-                // di sini kita abaikan baris yang tidak sesuai
+                // Bagian daftar kota favorit
+                if (!line.isEmpty()) {
+                    cbKota.addItem(line);
+                }
             }
         }
-        JOptionPane.showMessageDialog(this, "Impor selesai dari: " + fileToOpen.getAbsolutePath());
+
+        JOptionPane.showMessageDialog(this, "Data dan favorit berhasil dimuat dari:\n" + fileToOpen.getAbsolutePath());
     } catch (IOException e) {
         JOptionPane.showMessageDialog(this, "Gagal memuat file: " + e.getMessage());
     }
 }
 
     private void resetForm() {
-    // Hapus isi input dan label
+    int konfirmasi = JOptionPane.showConfirmDialog(
+        this,
+        "Apakah Anda yakin ingin mereset semua data?",
+        "Konfirmasi Reset",
+        JOptionPane.YES_NO_OPTION
+    );
+    if (konfirmasi != JOptionPane.YES_OPTION) return;
+
     txtKota.setText("");
     lblTampilCuaca.setText("-");
     lblTampilSuhu.setText("-");
     lblTampilLembap.setText("-");
     lblTampilGambar.setIcon(null);
     lblTampilGambar.setText("-");
-
-    // Hapus semua data di tabel
     model.setRowCount(0);
-
-    // Opsional: reset combo box ke awal
     cbKota.setSelectedIndex(-1);
 }
     private void simpanFavorit() {
