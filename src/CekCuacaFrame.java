@@ -37,53 +37,61 @@ public class CekCuacaFrame extends javax.swing.JFrame {
     }
 
     private void cekCuaca() {
-        String kota = txtKota.getText().trim();
+    String kota = txtKota.getText().trim();
 
-        // Jika kosong, coba ambil dari combo favorit
-        if (kota.isEmpty()) {
-            if (cbKota.getSelectedItem() == null) {
-                JOptionPane.showMessageDialog(this, "Masukkan nama kota atau pilih dari favorit!");
-                return;
-            }
-            kota = cbKota.getSelectedItem().toString();
+    if (kota.isEmpty()) {
+        if (cbKota.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(this, "Masukkan nama kota atau pilih dari favorit!");
+            return;
         }
-
-        try {
-            // Ganti dengan API key kamu yang aktif
-            String apiKey = "5337f334366226100745e5609c541469";
-            String urlString = "https://api.openweathermap.org/data/2.5/weather?q=" + kota
-                    + "&appid=" + apiKey + "&units=metric&lang=id";
-
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-
-            if (conn.getResponseCode() != 200) {
-                throw new IOException("Kode respons: " + conn.getResponseCode());
-            }
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) response.append(line);
-            br.close();
-
-            JSONObject json = new JSONObject(response.toString());
-            String kondisi = json.getJSONArray("weather").getJSONObject(0).getString("main");
-            double suhu = json.getJSONObject("main").getDouble("temp");
-            int kelembapan = json.getJSONObject("main").getInt("humidity");
-
-            lblTampilCuaca.setText(kondisi);
-            lblTampilSuhu.setText(String.format("%.1f °C", suhu));
-            lblTampilLembap.setText(kelembapan + "%");
-
-            tampilkanGambar(kondisi);
-            model.addRow(new Object[]{kota, suhu + " °C", kondisi, new Date().toString()});
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Gagal mengambil data cuaca: " + e.getMessage());
-        }
+        kota = cbKota.getSelectedItem().toString();
     }
+
+    try {
+        // 🔒 Baca API key dari file config.properties
+        String apiKey = "";
+        try {
+            Properties prop = new Properties();
+            prop.load(new FileInputStream("config.properties"));
+            apiKey = prop.getProperty("API_KEY");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Gagal membaca API key dari config.properties");
+            return;
+        }
+
+        String urlString = "https://api.openweathermap.org/data/2.5/weather?q=" + kota
+                + "&appid=" + apiKey + "&units=metric&lang=id";
+
+        URL url = new URL(urlString);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+
+        if (conn.getResponseCode() != 200) {
+            throw new IOException("Kode respons: " + conn.getResponseCode());
+        }
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = br.readLine()) != null) response.append(line);
+        br.close();
+
+        JSONObject json = new JSONObject(response.toString());
+        String kondisi = json.getJSONArray("weather").getJSONObject(0).getString("main");
+        double suhu = json.getJSONObject("main").getDouble("temp");
+        int kelembapan = json.getJSONObject("main").getInt("humidity");
+
+        lblTampilCuaca.setText(kondisi);
+        lblTampilSuhu.setText(String.format("%.1f °C", suhu));
+        lblTampilLembap.setText(kelembapan + "%");
+
+        tampilkanGambar(kondisi);
+        model.addRow(new Object[]{kota, suhu + " °C", kondisi, new Date().toString()});
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Gagal mengambil data cuaca: " + e.getMessage());
+    }
+}
 
     private void tampilkanGambar(String kondisi) {
         String path;
